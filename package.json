@@ -5,13 +5,15 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "pro": "cross-env NODE_ENV=production node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "express-async-handler": "^1.2.0",
