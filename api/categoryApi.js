@@ -1,5 +1,11 @@
 import express from "express";
 import {
+  getCategoryValidator,
+  updateCategoryValidator,
+  deleteCategoryValidator,
+} from "../utils/validator/categoryValidator.js";
+
+import {
   createCategory,
   getAllCategories,
   deleteCategory,
@@ -12,8 +18,8 @@ const router = express.Router();
 router.route("/").get(getAllCategories).post(createCategory);
 router
   .route("/:id")
-  .get(getCategory)
-  .delete(deleteCategory)
-  .put(updateCategory);
+  .get(getCategoryValidator, getCategory)
+  .delete(deleteCategoryValidator, deleteCategory)
+  .put(updateCategoryValidator, updateCategory);
 
 export default router;
