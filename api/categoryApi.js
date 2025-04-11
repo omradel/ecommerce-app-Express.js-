@@ -3,6 +3,7 @@ import {
   getCategoryValidator,
   updateCategoryValidator,
   deleteCategoryValidator,
+  createCategoryValidator,
 } from "../utils/validator/categoryValidator.js";
 
 import {
@@ -15,7 +16,10 @@ import {
 
 const router = express.Router();
 
-router.route("/").get(getAllCategories).post(createCategory);
+router
+  .route("/")
+  .get(getAllCategories)
+  .post(createCategoryValidator, createCategory);
 router
   .route("/:id")
   .get(getCategoryValidator, getCategory)

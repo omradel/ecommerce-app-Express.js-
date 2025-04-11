@@ -2,9 +2,11 @@ import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import dbConnection from "./config/database.js";
-import categoryRoutes from "./api/categoryApi.js";
-import globalErrorHndler from "./middlewares/errorMiddleware.js";
 import ApiError from "./utils/apiError.js";
+import globalErrorHndler from "./middlewares/errorMiddleware.js";
+import categoryRoutes from "./api/categoryApi.js";
+import subcategoryRoute from "./api/supcategoryApi.js";
+
 dotenv.config({ path: ".env" });
 
 // connection to db
@@ -22,6 +24,7 @@ if (process.env.NODE_ENV === "development") {
 
 // mount app routes
 app.use("/categories", categoryRoutes);
+app.use("/subcategory", subcategoryRoute);
 
 app.all(/.*/, (req, res, next) => {
   next(new ApiError(`can not find this route ${req.originalUrl}`, 500));
