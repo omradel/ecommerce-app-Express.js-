@@ -61,3 +61,44 @@ export const getSubcategory = expressAsyncHandler(async (req, res, next) => {
 
   res.status(200).json({ status: 200, message: "ok", data: subcategory });
 });
+
+// @desc    update  subcategory
+// @route   PUT /subcategory/:id
+// @access  private
+export const updateSubcategory = expressAsyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const { name, category_id } = req.body;
+  const category = await categoryModel.findById(category_id);
+
+  if (!category) {
+    return next(
+      new ApiError(`not founded category for this id ${category_id}`, 404)
+    );
+  }
+
+  const updatedSubcategory = await subCategoryModel.findByIdAndUpdate(
+    id,
+    { name, slug: slugify(name) },
+    { new: true }
+  );
+
+  res
+    .status(200)
+    .json({ status: 200, message: "ok", data: updatedSubcategory });
+});
+
+// @desc    delete subcategory
+// @route   DELETE /subcategory/:id
+// @access  private
+export const delteSubcategory = expressAsyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const deletedSubCategory = await subCategoryModel.findByIdAndDelete(id);
+
+  if (!deletedSubCategory) {
+    return next(new ApiError(`not founded subcategory for this id ${id}`, 404));
+  }
+
+  res
+    .status(200)
+    .json({ status: 200, message: "subcategory deleted successfully" });
+});
