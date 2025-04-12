@@ -24,3 +24,26 @@ export const createSubcategory = expressAsyncHandler(async (req, res, next) => {
 
   res.status(201).json({ status: 201, message: "ok", data: subcategory });
 });
+
+// @desc    get all subcategories
+// @route   GET /subcategory
+// @access  public
+export const getSubcategories = expressAsyncHandler(async (req, res) => {
+  const page = Number(req.query.page);
+  const per_page = Number(req.query.per_page);
+  const skip = (page - 1) * per_page;
+  const allSubcategories = await subCategoryModel.countDocuments();
+  const total_pages = allSubcategories / per_page;
+
+  const subcategories = await subCategoryModel
+    .find({})
+    .limit(per_page)
+    .skip(skip);
+
+  res.status(200).json({
+    status: 200,
+    message: "ok",
+    data: subcategories,
+    pagination: { page, per_page, total_pages, total: allSubcategories },
+  });
+});
