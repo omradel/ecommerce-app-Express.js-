@@ -12,3 +12,12 @@ export const createSubcategoryValidator = [
     .withMessage("subcategory name is too long"),
   validatorMiddlewares,
 ];
+
+export const getSubcategoryValidator = [
+  check("id")
+    .notEmpty()
+    .withMessage("subcategory id is required")
+    .isMongoId()
+    .withMessage("subcategory id must be a valid id"),
+  validatorMiddlewares,
+];
