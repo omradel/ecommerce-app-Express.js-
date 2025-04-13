@@ -1,4 +1,5 @@
 import categoryModel from "../models/categoryModel.js";
+import subCategoryModel from "../models/subCategoryModel.js";
 import slugify from "slugify";
 import expressAsyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.js";
@@ -19,13 +20,14 @@ export const getAllCategories = expressAsyncHandler(async (req, res) => {
   const page = Number(req.query.page);
   const per_page = Number(req.query.per_page);
   const skip = (page - 1) * per_page;
-  const allCategories = await categoryModel.countDocuments();
+
+  const [allCategories, paginatedCategories] = await Promise.all([
+    categoryModel.countDocuments(),
+    categoryModel.find({}).limit(per_page).skip(skip),
+  ]);
+
   const total_pages = allCategories / per_page;
 
-  const paginatedCategories = await categoryModel
-    .find({})
-    .limit(per_page)
-    .skip(skip);
   res.status(200).json({
     status: 200,
     message: "Ok",
@@ -47,11 +49,21 @@ export const getAllCategories = expressAsyncHandler(async (req, res) => {
 // @access  public
 export const getCategory = expressAsyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const singlecategory = await categoryModel.findById(id);
+
+  const [singlecategory, subCategories] = await Promise.all([
+    categoryModel.findById(id),
+    subCategoryModel.find({ category_id: id }),
+  ]);
+
   if (!singlecategory) {
     return next(new ApiError(`not found category with id ${id}`, 404));
   }
-  res.status(200).json({ status: 200, message: "ok", data: singlecategory });
+
+  const categoryData = singlecategory.toObject();
+
+  categoryData.subcategories = subCategories;
+
+  res.status(200).json({ status: 200, message: "ok", data: categoryData });
 });
 
 // @desc    update specific category
