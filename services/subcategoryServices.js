@@ -3,6 +3,7 @@ import categoryModel from "../models/categoryModel.js";
 import expressAsyncHandler from "express-async-handler";
 import slugify from "slugify";
 import ApiError from "../utils/apiError.js";
+import Pagination from "../utils/pagination.js";
 
 // @desc    create new subcategory
 // @route   POST /subcategory
@@ -54,11 +55,18 @@ export const getSubcategories = expressAsyncHandler(async (req, res) => {
     .skip(skip);
   // .populate({ path: "category", select: "name -_id" });
 
+  const pagination = new Pagination(
+    allSubcategories,
+    page,
+    per_page,
+    total_pages
+  );
+
   res.status(200).json({
     status: 200,
     message: "ok",
     data: subcategories,
-    pagination: { page, per_page, total_pages, total: allSubcategories },
+    pagination: allSubcategories && subcategories.length ? pagination : null,
   });
 });
 
