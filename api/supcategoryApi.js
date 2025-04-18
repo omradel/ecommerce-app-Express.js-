@@ -11,14 +11,16 @@ import {
   getSubcategory,
   updateSubcategory,
   delteSubcategory,
+  setCategoryIdtoBody,
+  filterSubcategories,
 } from "../services/subcategoryServices.js";
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router
   .route("/")
-  .get(getSubcategories)
-  .post(createSubcategoryValidator, createSubcategory);
+  .get(filterSubcategories, getSubcategories)
+  .post(setCategoryIdtoBody, createSubcategoryValidator, createSubcategory);
 
 router
   .route("/:id")

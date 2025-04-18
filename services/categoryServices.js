@@ -26,7 +26,7 @@ export const getAllCategories = expressAsyncHandler(async (req, res) => {
     categoryModel.find({}).limit(per_page).skip(skip),
   ]);
 
-  const total_pages = allCategories / per_page;
+  const total_pages = Math.ceil(allCategories / per_page);
 
   res.status(200).json({
     status: 200,
@@ -52,7 +52,7 @@ export const getCategory = expressAsyncHandler(async (req, res, next) => {
 
   const [singlecategory, subCategories] = await Promise.all([
     categoryModel.findById(id),
-    subCategoryModel.find({ category_id: id }),
+    subCategoryModel.find({ category: id }),
   ]);
 
   if (!singlecategory) {

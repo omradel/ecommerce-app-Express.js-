@@ -1,4 +1,6 @@
 import express from "express";
+import subcategoryRoutes from "./supcategoryApi.js";
+
 import {
   getCategoryValidator,
   updateCategoryValidator,
@@ -15,6 +17,9 @@ import {
 } from "../services/categoryServices.js";
 
 const router = express.Router();
+
+// nested route aproach to get subcategories for specific category
+router.use("/:categoryId/subcategory", subcategoryRoutes);
 
 router
   .route("/")
