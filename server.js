@@ -7,6 +7,7 @@ import globalErrorHndler from "./middlewares/errorMiddleware.js";
 import categoryRoutes from "./api/categoryApi.js";
 import subcategoryRoute from "./api/supcategoryApi.js";
 import brandsRoutes from "./api/brandApi.js";
+import productRoutes from "./api/productApi.js";
 
 dotenv.config({ path: ".env" });
 
@@ -27,6 +28,7 @@ if (process.env.NODE_ENV === "development") {
 app.use("/categories", categoryRoutes);
 app.use("/subcategory", subcategoryRoute);
 app.use("/brands", brandsRoutes);
+app.use("/products", productRoutes);
 
 app.all(/.*/, (req, res, next) => {
   next(new ApiError(`can not find this route ${req.originalUrl}`, 500));
