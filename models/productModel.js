@@ -19,8 +19,8 @@ const productSchema = new mongoose.Schema(
     description: {
       type: String,
       required: [true, "description is required"],
-      minlength: [30, "description is too short"],
-      maxlength: [100, "description is too long "],
+      minlength: [20, "description is too short"],
+      maxlength: [2000, "description is too long "],
       trim: true,
     },
 
@@ -35,9 +35,14 @@ const productSchema = new mongoose.Schema(
       type: Number,
     },
 
-    quantity: {
+    sold: {
       type: Number,
       default: 0,
+    },
+
+    quantity: {
+      type: Number,
+      required: [true, "product quantity is required"],
     },
 
     category: {
@@ -73,6 +78,7 @@ const productSchema = new mongoose.Schema(
 
     image_cover: {
       type: String,
+      required: [true, "image cover is required"],
     },
 
     images: [String],
