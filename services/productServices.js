@@ -58,7 +58,9 @@ export const getProduct = expressAsyncHandler(async (req, res, next) => {
 // @access  private
 export const updateProduct = expressAsyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  req.body.slug = slugify(req.body.title);
+  if (req.body.title) {
+    req.body.slug = slugify(req.body.title);
+  }
 
   const updatedProduct = await productModel.findByIdAndUpdate(id, req.body, {
     new: true,
