@@ -10,7 +10,7 @@ export const createProductValidator = [
     .withMessage("product name is required")
     .isLength({ min: 3 })
     .withMessage("product name is too short")
-    .isLength({ max: 20 })
+    .isLength({ max: 100 })
     .withMessage("product name is too long"),
   check("description")
     .notEmpty()

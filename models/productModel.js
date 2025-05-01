@@ -7,7 +7,7 @@ const productSchema = new mongoose.Schema(
       required: [true, "product title is required"],
       unique: [true, "product title must be unique"],
       minlength: [3, "product title is too short"],
-      maxlength: [20, "product title is too long"],
+      maxlength: [100, "product title is too long"],
       trim: true,
     },
 
