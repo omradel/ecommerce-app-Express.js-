@@ -1,5 +1,6 @@
 import { check } from "express-validator";
 import validatorMiddlewares from "../../middlewares/validatorMiddleware.js";
+import categoryModel from "../../models/categoryModel.js";
 
 export const createSubcategoryValidator = [
   check("name")
@@ -14,7 +15,13 @@ export const createSubcategoryValidator = [
     .notEmpty()
     .withMessage("category id is required")
     .isMongoId()
-    .withMessage("category id must be a valid id"),
+    .withMessage("category id must be a valid id")
+    .custom(async (value) => {
+      const id = await categoryModel.findById(value);
+      if (!id) {
+        throw new Error("category not founded");
+      }
+    }),
 
   validatorMiddlewares,
 ];
@@ -46,7 +53,14 @@ export const updateSubcategoryValidator = [
     .notEmpty()
     .withMessage("category id is required")
     .isMongoId()
-    .withMessage("category id must be a valid id"),
+    .withMessage("category id must be a valid id")
+    .custom(async (value) => {
+      const id = await categoryModel.findById(value);
+      if (!id) {
+        throw new Error("category not founded");
+      }
+    }),
+  ,
   validatorMiddlewares,
 ];
 

@@ -17,12 +17,6 @@ export const setCategoryIdtoBody = (req, res, next) => {
 export const createSubcategory = expressAsyncHandler(async (req, res, next) => {
   const { name, category_id } = req.body;
 
-  const category = await categoryModel.findById(category_id);
-
-  if (!category) {
-    return next(new ApiError(`not found category with id ${category_id}`, 404));
-  }
-
   const subcategory = await subCategoryModel.create({
     name,
     category: category_id,
@@ -90,21 +84,13 @@ export const getSubcategory = expressAsyncHandler(async (req, res, next) => {
 export const updateSubcategory = expressAsyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const { name, category_id } = req.body;
-  const category = await categoryModel.findById(category_id);
 
-  if (!category) {
-    return next(
-      new ApiError(`not founded category for this id ${category_id}`, 404)
-    );
-  }
-
-  const updatedSubcategory = await subCategoryModel
-    .findByIdAndUpdate(
-      id,
-      { name, category: category_id, slug: slugify(name) },
-      { new: true }
-    )
-    .populate({ path: "category", select: "name -_id" });
+  const updatedSubcategory = await subCategoryModel.findByIdAndUpdate(
+    id,
+    { name, category: category_id, slug: slugify(name) },
+    { new: true }
+  );
+  // .populate({ path: "category", select: "name -_id" });
 
   if (!updatedSubcategory) {
     return next(new ApiError(`not founded subcategory for this id ${id}`, 404));

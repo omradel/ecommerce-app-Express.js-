@@ -23,7 +23,11 @@ export const getAllProducts = expressAsyncHandler(async (req, res) => {
 
   const [allProducts, paginatedProducts] = await Promise.all([
     productModel.countDocuments(),
-    productModel.find({}).limit(per_page).skip(skip),
+    productModel
+      .find({})
+      .limit(per_page)
+      .skip(skip)
+      .populate({ path: "category", select: "name -_id" }),
   ]);
 
   const total_pages = Math.ceil(allProducts / per_page);
