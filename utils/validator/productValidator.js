@@ -33,7 +33,7 @@ export const createProductValidator = [
     .toFloat()
     .custom((value, { req }) => {
       if (req.body.price <= value) {
-        throw new Error("price must be bigger than discount");
+        return Promise.reject(new Error("price must be bigger than discount"));
       }
       return true;
     }),
@@ -62,7 +62,7 @@ export const createProductValidator = [
     .custom(async (value) => {
       const id = await categoryModel.findById(value);
       if (!id) {
-        throw new Error("not founded category");
+        return Promise.reject(new Error("not founded category"));
       }
     }),
 
@@ -73,7 +73,9 @@ export const createProductValidator = [
     .custom(async (value, { req }) => {
       const allValid = value.every((id) => mongoose.Types.ObjectId.isValid(id));
       if (!allValid) {
-        throw new Error("One or more subcategory IDs are invalid");
+        return Promise.reject(
+          new Error("One or more subcategory IDs are invalid")
+        );
       }
 
       const exist = await subCategoryModel.find({
