@@ -18,24 +18,35 @@ export const createProduct = expressAsyncHandler(async (req, res, next) => {
 // @route   GET /products
 // @access  public
 export const getAllProducts = expressAsyncHandler(async (req, res) => {
+  // pagination
   const page = Number(req.query.page) || 1;
   const per_page = Number(req.query.per_page) || 30;
   const skip = (page - 1) * per_page;
-  const array = ["page", "per_page"];
+
+  // filtering
+  const array = ["page", "per_page", "sort"];
   let filterObj = { ...req.query };
   array.forEach((el) => delete filterObj[el]);
-
   filterObj = agregation(filterObj);
 
-  console.log(filterObj);
+  // build query
+  let query = productModel
+    .find(filterObj)
+    .limit(per_page)
+    .skip(skip)
+    .populate({ path: "category", select: "name -_id" });
+
+  // sorting
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(",").join(" ");
+    query = query.sort(sortBy);
+  } else {
+    query = query.sort("-createdAt");
+  }
 
   const [allProducts, paginatedProducts] = await Promise.all([
     productModel.countDocuments(),
-    productModel
-      .find(filterObj)
-      .limit(per_page)
-      .skip(skip)
-      .populate({ path: "category", select: "name -_id" }),
+    query,
   ]);
 
   const total_pages = Math.ceil(allProducts / per_page);
