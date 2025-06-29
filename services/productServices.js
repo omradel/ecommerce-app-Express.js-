@@ -24,7 +24,7 @@ export const getAllProducts = expressAsyncHandler(async (req, res) => {
   const skip = (page - 1) * per_page;
 
   // filtering
-  const array = ["page", "per_page", "sort", "fields"];
+  const array = ["page", "per_page", "sort", "fields", "keyword"];
   let filterObj = { ...req.query };
   array.forEach((el) => delete filterObj[el]);
   filterObj = agregation(filterObj);
@@ -50,6 +50,17 @@ export const getAllProducts = expressAsyncHandler(async (req, res) => {
     query = query.select(fields);
   } else {
     query = query.select("-__v");
+  }
+
+  // searching
+  if (req.query.keyword) {
+    const keyword = req.query.keyword;
+    let searchQuery = {};
+    searchQuery.$or = [
+      { title: { $regex: keyword, $options: "i" } },
+      { description: { $regex: keyword, $options: "i" } },
+    ];
+    query = query.find(searchQuery);
   }
 
   const [allProducts, paginatedProducts] = await Promise.all([
