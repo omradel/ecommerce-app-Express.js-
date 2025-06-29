@@ -3,8 +3,7 @@ import expressAsyncHandler from "express-async-handler";
 import slugify from "slugify";
 import ApiError from "../utils/apiError.js";
 import ApiFeatures from "../utils/apiFeatures.js";
-import Pagination from "../utils/pagination.js";
-import agregation from "../utils/agregation.js";
+import { deleteOne } from "./handlersFactory.js";
 
 // @desc    create product
 // @route   POST /products
@@ -79,16 +78,4 @@ export const updateProduct = expressAsyncHandler(async (req, res, next) => {
 // @desc    delete product
 // @route   DELETE /product/:id
 // @access  private
-export const deleteProduct = expressAsyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-
-  const deletedProduct = await productModel.findByIdAndDelete(id);
-
-  if (!deletedProduct) {
-    return next(new ApiError(`not found product with id ${id}`, 404));
-  }
-
-  res
-    .status(200)
-    .json({ status: 200, message: "product deleted successfully" });
-});
+export const deleteProduct = deleteOne(productModel);

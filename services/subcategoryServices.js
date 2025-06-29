@@ -4,6 +4,7 @@ import expressAsyncHandler from "express-async-handler";
 import slugify from "slugify";
 import ApiError from "../utils/apiError.js";
 import ApiFeatures from "../utils/apiFeatures.js";
+import { deleteOne } from "./handlersFactory.js";
 
 // @desc    create new subcategory
 // @route   POST /subcategory
@@ -99,15 +100,4 @@ export const updateSubcategory = expressAsyncHandler(async (req, res, next) => {
 // @desc    delete subcategory
 // @route   DELETE /subcategory/:id
 // @access  private
-export const delteSubcategory = expressAsyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const deletedSubCategory = await subCategoryModel.findByIdAndDelete(id);
-
-  if (!deletedSubCategory) {
-    return next(new ApiError(`not founded subcategory for this id ${id}`, 404));
-  }
-
-  res
-    .status(200)
-    .json({ status: 200, message: "subcategory deleted successfully" });
-});
+export const delteSubcategory = deleteOne(subCategoryModel);

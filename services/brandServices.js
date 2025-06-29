@@ -3,7 +3,7 @@ import slugify from "slugify";
 import expressAsyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.js";
 import ApiFeatures from "../utils/apiFeatures.js";
-import Pagination from "../utils/pagination.js";
+import { deleteOne } from "./handlersFactory.js";
 
 // @desc    add new brand
 // @route   POST /brands
@@ -77,14 +77,4 @@ export const updateBrand = expressAsyncHandler(async (req, res, next) => {
 // @desc    delete brand
 // @route   DELETE /brand/:id
 // @access  private
-export const deleteBrand = expressAsyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-
-  const deletedBrand = await brandModel.findByIdAndDelete(id);
-
-  if (!deletedBrand) {
-    return next(new ApiError(`not found brand with id ${id}`, 404));
-  }
-
-  res.status(200).json({ status: 200, message: "brand deleted successfully" });
-});
+export const deleteBrand = deleteOne(brandModel);

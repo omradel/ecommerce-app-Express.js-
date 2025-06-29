@@ -4,7 +4,7 @@ import slugify from "slugify";
 import expressAsyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.js";
 import ApiFeatures from "../utils/apiFeatures.js";
-import Pagination from "../utils/pagination.js";
+import { deleteOne } from "./handlersFactory.js";
 
 // @desc    add new category
 // @route   POST /categories
@@ -85,16 +85,4 @@ export const updateCategory = expressAsyncHandler(async (req, res, next) => {
 // @desc    delete category
 // @route   DELETE /categories/:id
 // @access  private
-export const deleteCategory = expressAsyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-
-  const deletedCategory = await categoryModel.findByIdAndDelete(id);
-
-  if (!deletedCategory) {
-    return next(new ApiError(`not found category with id ${id}`, 404));
-  }
-
-  res
-    .status(200)
-    .json({ status: 200, message: "category deleted successfully" });
-});
+export const deleteCategory = deleteOne(categoryModel);
