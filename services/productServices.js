@@ -2,6 +2,7 @@ import productModel from "../models/productModel.js";
 import expressAsyncHandler from "express-async-handler";
 import slugify from "slugify";
 import ApiError from "../utils/apiError.js";
+import ApiFeatures from "../utils/apiFeatures.js";
 import Pagination from "../utils/pagination.js";
 import agregation from "../utils/agregation.js";
 
@@ -18,58 +19,23 @@ export const createProduct = expressAsyncHandler(async (req, res, next) => {
 // @route   GET /products
 // @access  public
 export const getAllProducts = expressAsyncHandler(async (req, res) => {
-  // pagination
-  const page = Number(req.query.page) || 1;
-  const per_page = Number(req.query.per_page) || 30;
-  const skip = (page - 1) * per_page;
-
-  // filtering
-  const array = ["page", "per_page", "sort", "fields", "keyword"];
-  let filterObj = { ...req.query };
-  array.forEach((el) => delete filterObj[el]);
-  filterObj = agregation(filterObj);
-
   // build query
-  let query = productModel
-    .find(filterObj)
-    .limit(per_page)
-    .skip(skip)
-    .populate({ path: "category", select: "name -_id" });
+  const per_page = req.query.per_page ? +req.query.per_page : 30;
+  const page = req.query.page ? +req.query.page : 1;
+  let apiFeatures = new ApiFeatures(productModel.find(), req.query)
+    .paginate(per_page)
+    .sort()
+    .selectFields()
+    .filter()
+    .search();
 
-  // sorting
-  if (req.query.sort) {
-    const sortBy = req.query.sort.split(",").join(" ");
-    query = query.sort(sortBy);
-  } else {
-    query = query.sort("-createdAt");
-  }
-
-  // selecting fields
-  if (req.query.fields) {
-    const fields = req.query.fields.split(",").join(" ");
-    query = query.select(fields);
-  } else {
-    query = query.select("-__v");
-  }
-
-  // searching
-  if (req.query.keyword) {
-    const keyword = req.query.keyword;
-    let searchQuery = {};
-    searchQuery.$or = [
-      { title: { $regex: keyword, $options: "i" } },
-      { description: { $regex: keyword, $options: "i" } },
-    ];
-    query = query.find(searchQuery);
-  }
-
+  // excute query
   const [allProducts, paginatedProducts] = await Promise.all([
     productModel.countDocuments(),
-    query,
+    apiFeatures.query,
   ]);
 
   const total_pages = Math.ceil(allProducts / per_page);
-
   const pagination = new Pagination(allProducts, page, per_page, total_pages);
 
   res.status(200).json({
