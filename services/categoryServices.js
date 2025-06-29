@@ -3,6 +3,7 @@ import subCategoryModel from "../models/subCategoryModel.js";
 import slugify from "slugify";
 import expressAsyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.js";
+import ApiFeatures from "../utils/apiFeatures.js";
 import Pagination from "../utils/pagination.js";
 
 // @desc    add new category
@@ -18,18 +19,18 @@ export const createCategory = expressAsyncHandler(async (req, res) => {
 // @route   GET /categories
 // @access  public
 export const getAllCategories = expressAsyncHandler(async (req, res) => {
-  const page = Number(req.query.page);
-  const per_page = Number(req.query.per_page);
-  const skip = (page - 1) * per_page;
+  // build query
+  const allCategories = await categoryModel.countDocuments();
+  const apiFeatures = new ApiFeatures(categoryModel.find(), req.query)
+    .paginate(allCategories)
+    .sort()
+    .selectFields()
+    .filter()
+    .search();
 
-  const [allCategories, paginatedCategories] = await Promise.all([
-    categoryModel.countDocuments(),
-    categoryModel.find({}).limit(per_page).skip(skip),
-  ]);
-
-  const total_pages = Math.ceil(allCategories / per_page);
-
-  const pagination = new Pagination(allCategories, page, per_page, total_pages);
+  // excute query
+  const { query, pagination } = apiFeatures;
+  const paginatedCategories = await query;
 
   res.status(200).json({
     status: 200,
