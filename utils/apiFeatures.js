@@ -1,5 +1,4 @@
 import agregation from "../utils/agregation.js";
-
 class ApiFeatures {
   constructor(query, queryString) {
     this.query = query;
@@ -48,10 +47,28 @@ class ApiFeatures {
     return this;
   }
 
-  paginate(perPage) {
+  paginate(countDocuments) {
     const page = this.queryString.page * 1 || 1;
-    const skip = (page - 1) * perPage;
-    this.query = this.query.limit(perPage).skip(skip);
+    const per_page = this.queryString.per_page * 1 || 30;
+    const skip = (page - 1) * per_page;
+    const endIndex = page * per_page;
+
+    const pagination = {};
+    pagination.current_page = page;
+    pagination.per_page = per_page;
+    pagination.total = countDocuments;
+    pagination.total_pages = Math.ceil(countDocuments / per_page);
+
+    if (endIndex < countDocuments) {
+      pagination.next_page = page + 1;
+    }
+
+    if (skip > 0) {
+      pagination.previous_page = page - 1;
+    }
+
+    this.query = this.query.limit(per_page).skip(skip);
+    this.pagination = pagination;
     return this;
   }
 }

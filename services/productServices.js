@@ -20,23 +20,17 @@ export const createProduct = expressAsyncHandler(async (req, res, next) => {
 // @access  public
 export const getAllProducts = expressAsyncHandler(async (req, res) => {
   // build query
-  const per_page = req.query.per_page ? +req.query.per_page : 30;
-  const page = req.query.page ? +req.query.page : 1;
+  const allProducts = await productModel.countDocuments();
   let apiFeatures = new ApiFeatures(productModel.find(), req.query)
-    .paginate(per_page)
+    .paginate(allProducts)
     .sort()
     .selectFields()
     .filter()
     .search();
 
   // excute query
-  const [allProducts, paginatedProducts] = await Promise.all([
-    productModel.countDocuments(),
-    apiFeatures.query,
-  ]);
-
-  const total_pages = Math.ceil(allProducts / per_page);
-  const pagination = new Pagination(allProducts, page, per_page, total_pages);
+  const { query, pagination } = apiFeatures;
+  const paginatedProducts = await query;
 
   res.status(200).json({
     status: 200,
