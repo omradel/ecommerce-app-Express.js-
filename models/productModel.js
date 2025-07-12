@@ -86,6 +86,20 @@ const productSchema = new mongoose.Schema(
   { timestamps: true, versionKey: false }
 );
 
+productSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "category",
+    select: "name -_id",
+  });
+
+  this.populate({
+    path: "subcategory",
+    select: "name -_id",
+  });
+
+  next();
+});
+
 const productModel = mongoose.model("productModel", productSchema);
 
 export default productModel;
