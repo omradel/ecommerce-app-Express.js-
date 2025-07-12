@@ -1,9 +1,11 @@
 import brandModel from "../models/brandsModel.js";
-import slugify from "slugify";
-import expressAsyncHandler from "express-async-handler";
-import ApiError from "../utils/apiError.js";
-import ApiFeatures from "../utils/apiFeatures.js";
-import { deleteOne, updateOne, createOne, getOne } from "./handlersFactory.js";
+import {
+  deleteOne,
+  updateOne,
+  createOne,
+  getOne,
+  getAll,
+} from "./handlersFactory.js";
 
 // @desc    add new brand
 // @route   POST /brands
@@ -13,27 +15,7 @@ export const createBrand = createOne(brandModel);
 // @desc    get all brands
 // @route   GET /brands
 // @access  public
-export const getAllBrands = expressAsyncHandler(async (req, res) => {
-  // build query
-  const allBrands = await brandModel.countDocuments();
-  const apiFeatures = new ApiFeatures(brandModel.find(), req.query)
-    .paginate(allBrands)
-    .sort()
-    .selectFields()
-    .filter()
-    .search();
-
-  // excute query
-  const { query, pagination } = apiFeatures;
-  const paginatedBrands = await query;
-
-  res.status(200).json({
-    status: 200,
-    message: "Ok",
-    data: paginatedBrands,
-    pagination: allBrands && paginatedBrands.length ? pagination : null,
-  });
-});
+export const getAllBrands = getAll(brandModel);
 
 // @desc    get specific brand
 // @route   GET /brands/:id

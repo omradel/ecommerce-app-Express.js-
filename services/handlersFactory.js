@@ -1,4 +1,3 @@
-import slugify from "slugify";
 import expressAsyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.js";
 import ApiFeatures from "../utils/apiFeatures.js";
@@ -52,4 +51,35 @@ export const getOne = (Model) =>
     }
 
     res.status(200).json({ status: 200, message: "ok", data: document });
+  });
+
+// getAll factory
+export const getAll = (Model) =>
+  expressAsyncHandler(async (req, res) => {
+    // this for nested routes
+    let filter = {};
+    if (req.filterObj) {
+      filter = req.filterObj;
+    }
+
+    // build query
+    const allDocuments = await Model.countDocuments();
+    const apiFeatures = new ApiFeatures(Model.find(filter), req.query)
+      .paginate(allDocuments)
+      .sort()
+      .selectFields()
+      .filter()
+      .search();
+
+    // excute query
+    const { query, pagination } = apiFeatures;
+    const paginatedDocuments = await query;
+
+    res.status(200).json({
+      status: 200,
+      result: paginatedDocuments.length,
+      message: "Ok",
+      data: paginatedDocuments,
+      pagination: allDocuments && paginatedDocuments.length ? pagination : null,
+    });
   });

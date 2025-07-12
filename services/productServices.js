@@ -1,9 +1,11 @@
 import productModel from "../models/productModel.js";
-import expressAsyncHandler from "express-async-handler";
-import slugify from "slugify";
-import ApiError from "../utils/apiError.js";
-import ApiFeatures from "../utils/apiFeatures.js";
-import { deleteOne, updateOne, createOne, getOne } from "./handlersFactory.js";
+import {
+  deleteOne,
+  updateOne,
+  createOne,
+  getOne,
+  getAll,
+} from "./handlersFactory.js";
 
 // @desc    create product
 // @route   POST /products
@@ -13,28 +15,7 @@ export const createProduct = createOne(productModel);
 // @desc    get all products
 // @route   GET /products
 // @access  public
-export const getAllProducts = expressAsyncHandler(async (req, res) => {
-  // build query
-  const allProducts = await productModel.countDocuments();
-  let apiFeatures = new ApiFeatures(productModel.find(), req.query)
-    .paginate(allProducts)
-    .sort()
-    .selectFields()
-    .filter()
-    .search();
-
-  // excute query
-  const { query, pagination } = apiFeatures;
-  const paginatedProducts = await query;
-
-  res.status(200).json({
-    status: 200,
-    results: paginatedProducts.length,
-    message: "Ok",
-    data: paginatedProducts,
-    pagination: allProducts && paginatedProducts.length ? pagination : null,
-  });
-});
+export const getAllProducts = getAll(productModel);
 
 // @desc    get specific product
 // @route   GET /product/:id
