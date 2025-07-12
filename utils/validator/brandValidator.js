@@ -1,5 +1,6 @@
 import { check } from "express-validator";
 import validatorMiddleware from "../../middlewares/validatorMiddleware.js";
+import slugify from "slugify";
 
 export const createBrandValidator = [
   check("name")
@@ -33,7 +34,11 @@ export const updateBrandValidator = [
     .isLength({ min: 3 })
     .withMessage("name is too short")
     .isLength({ max: 20 })
-    .withMessage("name is too long"),
+    .withMessage("name is too long")
+    .custom((val, { req }) => {
+      req.body.slug = slugify(val);
+      return true;
+    }),
   validatorMiddleware,
 ];
 

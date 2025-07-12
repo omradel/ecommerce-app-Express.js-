@@ -3,6 +3,7 @@ import validatorMiddleware from "../../middlewares/validatorMiddleware.js";
 import categoryModel from "../../models/categoryModel.js";
 import subCategoryModel from "../../models/subCategoryModel.js";
 import mongoose from "mongoose";
+import slugify from "slugify";
 
 export const createProductValidator = [
   check("title")
@@ -121,6 +122,10 @@ export const getProductValidator = [
 
 export const updateProductValidator = [
   check("id").isMongoId().withMessage("product id must be a valid id"),
+  check("title").custom((val, { req }) => {
+    req.body.slug = slugify(val);
+    return true;
+  }),
   check("category")
     .optional()
     .isMongoId()

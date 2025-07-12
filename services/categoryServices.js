@@ -4,7 +4,7 @@ import slugify from "slugify";
 import expressAsyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.js";
 import ApiFeatures from "../utils/apiFeatures.js";
-import { deleteOne } from "./handlersFactory.js";
+import { deleteOne, updateOne } from "./handlersFactory.js";
 
 // @desc    add new category
 // @route   POST /categories
@@ -65,22 +65,7 @@ export const getCategory = expressAsyncHandler(async (req, res, next) => {
 // @desc    update specific category
 // @route   PUT /categories/:id
 // @access  private
-export const updateCategory = expressAsyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const { name } = req.body;
-
-  const updatedCategory = await categoryModel.findByIdAndUpdate(
-    id,
-    { name, slug: slugify(name) },
-    { new: true }
-  );
-
-  if (!updatedCategory) {
-    return next(new ApiError(`not found category with id ${id}`, 404));
-  }
-
-  res.status(200).json({ status: 200, message: "ok", data: updatedCategory });
-});
+export const updateCategory = updateOne(categoryModel);
 
 // @desc    delete category
 // @route   DELETE /categories/:id
