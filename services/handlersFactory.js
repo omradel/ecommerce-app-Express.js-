@@ -32,3 +32,10 @@ export const updateOne = (Model) =>
 
     res.status(200).json({ status: 200, message: "ok", data: document });
   });
+
+// createOne factory
+export const createOne = (Model) =>
+  expressAsyncHandler(async (req, res) => {
+    const document = await Model.create(req.body);
+    res.status(201).json({ status: 201, data: document });
+  });

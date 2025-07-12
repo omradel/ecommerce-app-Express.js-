@@ -3,16 +3,12 @@ import slugify from "slugify";
 import expressAsyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.js";
 import ApiFeatures from "../utils/apiFeatures.js";
-import { deleteOne, updateOne } from "./handlersFactory.js";
+import { deleteOne, updateOne, createOne } from "./handlersFactory.js";
 
 // @desc    add new brand
 // @route   POST /brands
 // @access  private
-export const createBrand = expressAsyncHandler(async (req, res) => {
-  const { name } = req.body;
-  const newBrand = await brandModel.create({ name, slug: slugify(name) });
-  res.status(201).json({ status: 201, data: newBrand });
-});
+export const createBrand = createOne(brandModel);
 
 // @desc    get all brands
 // @route   GET /brands

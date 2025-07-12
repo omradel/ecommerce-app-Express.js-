@@ -4,16 +4,12 @@ import slugify from "slugify";
 import expressAsyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.js";
 import ApiFeatures from "../utils/apiFeatures.js";
-import { deleteOne, updateOne } from "./handlersFactory.js";
+import { deleteOne, updateOne, createOne } from "./handlersFactory.js";
 
 // @desc    add new category
 // @route   POST /categories
 // @access  private
-export const createCategory = expressAsyncHandler(async (req, res) => {
-  const name = req.body.name;
-  const category = await categoryModel.create({ name, slug: slugify(name) });
-  res.status(201).json({ status: 201, data: category });
-});
+export const createCategory = createOne(categoryModel);
 
 // @desc    get all categories
 // @route   GET /categories
@@ -48,7 +44,7 @@ export const getCategory = expressAsyncHandler(async (req, res, next) => {
 
   const [singlecategory, subCategories] = await Promise.all([
     categoryModel.findById(id),
-    subCategoryModel.find({ category: id }),
+    subCategoryModel.find({ category_id: id }),
   ]);
 
   if (!singlecategory) {

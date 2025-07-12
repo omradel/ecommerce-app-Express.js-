@@ -12,7 +12,11 @@ export const createProductValidator = [
     .isLength({ min: 3 })
     .withMessage("product name is too short")
     .isLength({ max: 100 })
-    .withMessage("product name is too long"),
+    .withMessage("product name is too long")
+    .custom((val, { req }) => {
+      req.body.slug = slugify(val);
+      return true;
+    }),
   check("description")
     .notEmpty()
     .withMessage("product desc is required")
@@ -91,7 +95,7 @@ export const createProductValidator = [
     })
     .custom(async (value, { req }) => {
       const subCatecories = await subCategoryModel.find({
-        category: req.body.category,
+        category_id: req.body.category,
       });
 
       const subCategoriesIds = [];

@@ -9,7 +9,12 @@ export const createBrandValidator = [
     .isLength({ min: 3 })
     .withMessage("brand name is too short")
     .isLength({ max: 20 })
-    .withMessage("brand name is too long"),
+    .withMessage("brand name is too long")
+    .custom((val, { req }) => {
+      req.body.slug = slugify(val);
+      return true;
+    }),
+  ,
   validatorMiddleware,
 ];
 

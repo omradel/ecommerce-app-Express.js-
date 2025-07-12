@@ -4,28 +4,17 @@ import expressAsyncHandler from "express-async-handler";
 import slugify from "slugify";
 import ApiError from "../utils/apiError.js";
 import ApiFeatures from "../utils/apiFeatures.js";
-import { deleteOne, updateOne } from "./handlersFactory.js";
+import { deleteOne, updateOne, createOne } from "./handlersFactory.js";
 
 // @desc    create new subcategory
 // @route   POST /subcategory
 // @access  private
-
 export const setCategoryIdtoBody = (req, res, next) => {
   if (!req.body.category_id) req.body.category_id = req.params.categoryId;
   next();
 };
 
-export const createSubcategory = expressAsyncHandler(async (req, res, next) => {
-  const { name, category_id } = req.body;
-
-  const subcategory = await subCategoryModel.create({
-    name,
-    category: category_id,
-    slug: slugify(name),
-  });
-
-  res.status(201).json({ status: 201, message: "ok", data: subcategory });
-});
+export const createSubcategory = createOne(subCategoryModel);
 
 // @desc    get all subcategories
 // @route   GET /subcategory

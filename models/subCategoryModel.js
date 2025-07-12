@@ -16,7 +16,7 @@ const subCategorySchema = mongoose.Schema(
       type: String,
     },
 
-    category: {
+    category_id: {
       type: mongoose.Schema.ObjectId,
       ref: "categoryModel",
       required: [true, "subcategory must belong to a category"],

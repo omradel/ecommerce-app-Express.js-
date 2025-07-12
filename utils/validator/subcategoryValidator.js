@@ -11,7 +11,11 @@ export const createSubcategoryValidator = [
     .isLength({ min: 3 })
     .withMessage("subcategory name is too short")
     .isLength({ max: 20 })
-    .withMessage("subcategory name is too long"),
+    .withMessage("subcategory name is too long")
+    .custom((val, { req }) => {
+      req.body.slug = slugify(val);
+      return true;
+    }),
   check("category_id")
     .notEmpty()
     .withMessage("category id is required")
