@@ -3,7 +3,7 @@ import expressAsyncHandler from "express-async-handler";
 import slugify from "slugify";
 import ApiError from "../utils/apiError.js";
 import ApiFeatures from "../utils/apiFeatures.js";
-import { deleteOne, updateOne, createOne } from "./handlersFactory.js";
+import { deleteOne, updateOne, createOne, getOne } from "./handlersFactory.js";
 
 // @desc    create product
 // @route   POST /products
@@ -39,17 +39,7 @@ export const getAllProducts = expressAsyncHandler(async (req, res) => {
 // @desc    get specific product
 // @route   GET /product/:id
 // @access  public
-export const getProduct = expressAsyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-
-  const product = await productModel.findById(id);
-
-  if (!product) {
-    return next(new ApiError(`not found product with id ${id}`, 404));
-  }
-
-  res.status(200).json({ status: 200, message: "ok", data: product });
-});
+export const getProduct = getOne(productModel);
 
 // @desc    update specific product
 // @route   PUT /product/:id

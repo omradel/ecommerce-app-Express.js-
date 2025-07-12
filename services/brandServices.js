@@ -3,7 +3,7 @@ import slugify from "slugify";
 import expressAsyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.js";
 import ApiFeatures from "../utils/apiFeatures.js";
-import { deleteOne, updateOne, createOne } from "./handlersFactory.js";
+import { deleteOne, updateOne, createOne, getOne } from "./handlersFactory.js";
 
 // @desc    add new brand
 // @route   POST /brands
@@ -38,17 +38,7 @@ export const getAllBrands = expressAsyncHandler(async (req, res) => {
 // @desc    get specific brand
 // @route   GET /brands/:id
 // @access  public
-export const getBrand = expressAsyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-
-  const singleBrand = await brandModel.findById(id);
-
-  if (!singleBrand) {
-    return next(new ApiError(`not found brand with id ${id}`, 404));
-  }
-
-  res.status(200).json({ status: 200, message: "ok", data: singleBrand });
-});
+export const getBrand = getOne(brandModel);
 
 // @desc    update specific brand
 // @route   PUT /brands/:id

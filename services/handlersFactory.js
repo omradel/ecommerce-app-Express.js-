@@ -39,3 +39,17 @@ export const createOne = (Model) =>
     const document = await Model.create(req.body);
     res.status(201).json({ status: 201, data: document });
   });
+
+// getOne factory
+export const getOne = (Model) =>
+  expressAsyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+
+    const document = await Model.findById(id);
+
+    if (!document) {
+      return next(new ApiError(`not found brand with id ${id}`, 404));
+    }
+
+    res.status(200).json({ status: 200, message: "ok", data: document });
+  });
