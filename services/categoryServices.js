@@ -1,4 +1,5 @@
 import categoryModel from "../models/categoryModel.js";
+import ApiError from "../utils/apiError.js";
 import { v4 as uuidv4 } from "uuid";
 import multer from "multer";
 import {
@@ -22,7 +23,15 @@ const multerStorage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: multerStorage });
+const multerFilter = function (req, file, cb) {
+  if (file.mimetype.startsWith("image")) {
+    cb(null, true);
+  } else {
+    cb(new ApiError("file uploaded must be an image", 400), false);
+  }
+};
+
+const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
 
 export const uploadImage = upload.single("image");
 
