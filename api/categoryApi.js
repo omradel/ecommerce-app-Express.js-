@@ -14,6 +14,7 @@ import {
   deleteCategory,
   getCategory,
   updateCategory,
+  uploadImage,
 } from "../services/categoryServices.js";
 
 const router = express.Router();
@@ -24,7 +25,7 @@ router.use("/:categoryId/subcategory", subcategoryRoutes);
 router
   .route("/")
   .get(getAllCategories)
-  .post(createCategoryValidator, createCategory);
+  .post(uploadImage, createCategoryValidator, createCategory);
 router
   .route("/:id")
   .get(getCategoryValidator, getCategory)
